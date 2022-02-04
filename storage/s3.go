@@ -498,6 +498,11 @@ func (s *S3) Put(
 		ContentType: aws.String(contentType),
 	}
 
+	contentEncoding := metadata.ContentEncoding()
+	if contentEncoding != "" {
+		input.ContentEncoding = aws.String(contentEncoding)
+	}
+
 	storageClass := metadata.StorageClass()
 	if storageClass != "" {
 		input.StorageClass = aws.String(storageClass)
