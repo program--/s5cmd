@@ -155,6 +155,14 @@ func NewCopyCommandFlags() []cli.Flag {
 			Usage: "set cache control for target: defines cache control header for object, e.g. cp --cache-control 'public, max-age=345600'",
 		},
 		&cli.StringFlag{
+			Name:  "content-encoding",
+			Usage: "set content-encoding for target: defines content-encoding header for object, e.g. cp --content-encoding 'gzip'",
+		},
+		&cli.StringFlag{
+			Name:  "content-type",
+			Usage: "set content-type for target: defines content-type header for object, e.g. cp --content-type 'application/json'",
+		},
+		&cli.StringFlag{
 			Name:  "expires",
 			Usage: "set expires for target (uses RFC3339 format): defines expires header for object, e.g. cp  --expires '2024-10-01T20:30:00Z'",
 		},
@@ -227,6 +235,8 @@ type Copy struct {
 	exclude              []string
 	raw                  bool
 	cacheControl         string
+	contentEncoding      string
+	contentType          string
 	expires              string
 
 	// region settings
@@ -263,6 +273,8 @@ func NewCopy(c *cli.Context, deleteSource bool) Copy {
 		exclude:              c.StringSlice("exclude"),
 		raw:                  c.Bool("raw"),
 		cacheControl:         c.String("cache-control"),
+		contentEncoding:      c.String("content-encoding"),
+		contentType:          c.String("content-type"),
 		expires:              c.String("expires"),
 		// region settings
 		srcRegion: c.String("source-region"),
@@ -527,8 +539,13 @@ func (c Copy) doUpload(ctx context.Context, srcurl *url.URL, dsturl *url.URL) er
 		return err
 	}
 
+	if c.contentType == "" {
+		c.contentType = guessContentType(file)
+	}
+
 	metadata := storage.NewMetadata().
-		SetContentType(guessContentType(file)).
+		SetContentType(c.contentType).
+		SetContentEncoding(c.contentEncoding).
 		SetStorageClass(string(c.storageClass)).
 		SetSSE(c.encryptionMethod).
 		SetSSEKeyID(c.encryptionKeyID).
