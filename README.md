@@ -167,6 +167,14 @@ $ tree
 
     s5cmd cp -acl bucket-owner-full-control object.gz s3://bucket/
 
+ by setting Content-Type (*content-type*) of the object:
+
+   s5cmd cp --content-type 'gzip' object.json s3://bucket/
+
+ by setting Content-Encoding (*content-encoding*) of the object:
+   
+   s5cmd cp --content-encoding 'application/json' object.json s3://bucket/
+
 #### Upload multiple files to S3
 
     s5cmd cp directory/ s3://bucket/
