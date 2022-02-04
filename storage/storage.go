@@ -244,6 +244,15 @@ func (m Metadata) SetContentType(contentType string) Metadata {
 	return m
 }
 
+func (m Metadata) ContentEncoding() string {
+	return m["ContentEncoding"]
+}
+
+func (m Metadata) SetContentEncoding(contentEncoding string) Metadata {
+	m["ContentEncoding"] = contentEncoding
+	return m
+}
+
 func (m Metadata) SSE() string {
 	return m["EncryptionMethod"]
 }
